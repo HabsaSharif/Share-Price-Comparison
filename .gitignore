@@ -1,17 +1,12 @@
-# Compiled class file
+# ===== Java / JVM =====
 *.class
-
-# Log file
 *.log
-
-# BlueJ files
+hs_err_pid*
+replay_pid*
+.mtj.tmp/
 *.ctxt
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
+# Package artifacts (usually don't commit builds)
 *.war
 *.nar
 *.ear
@@ -19,6 +14,50 @@
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
+# ===== Maven / Gradle build output =====
+target/
+build/
+out/
+
+# Keep Maven wrapper jar (needed to run ./mvnw)
+!.mvn/wrapper/maven-wrapper.jar
+
+# Don't ignore nested target/build folders inside source trees (rare, but keep these rules)
+!**/src/main/**/target/
+!**/src/test/**/target/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Kotlin (if applicable)
+.kotlin
+
+# ===== IntelliJ IDEA =====
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# (Optional: if you prefer not to ignore entire .idea/, you can remove the .idea/ line above
+# and keep only the specific .idea/* ignores. But ignoring .idea/ is normal in team repos.)
+
+# ===== Eclipse =====
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
+# ===== NetBeans =====
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ===== VS Code =====
+.vscode/
+
+# ===== macOS =====
+.DS_Store
