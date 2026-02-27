@@ -25,4 +25,4 @@ Similarly, the system follows the SOLID principles by separating responsibilitie
 ## Planned Features for Project
 - Retrieve share price data from local or external stores. 
 - Store and fetch data locally
-- Generate a graph to depict the price history of chosen stocks over specified time frames.
+- Generate a graph to depict the price history of chosen stocks over specified time frame.
