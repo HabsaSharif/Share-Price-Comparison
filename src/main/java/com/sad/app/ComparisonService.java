@@ -1,36 +1,34 @@
 package com.sad.app;
 
 import com.sad.domain.ComparisonResult;
+import com.sad.domain.DateRange;
 import com.sad.domain.PriceSeries;
 import com.sad.domain.Ticker;
-import com.sad.ports.IComparisonService;
-import com.sad.ports.IPriceRepository;
+import com.sad.ports.IComparisonMgt;
+import com.sad.ports.IPriceMgt;
 
-public class ComparisonService implements IComparisonService {
+import java.util.ArrayList;
+import java.util.List;
 
-    private final IPriceRepository repository;
-    /* The service depends on the repository abstraction so it can obtain price data without knowing how or where it is retrieved. */
+public class ComparisonService implements IComparisonMgt {
 
-    //Constructor to initialize a Comparison Service object with any fitting repository
-    public ComparisonService(IPriceRepository repository) {
-        this.repository = repository;
+    private final IPriceMgt priceMgt;
+
+    public ComparisonService(IPriceMgt priceMgt) {
+        this.priceMgt = priceMgt;
     }
 
-    //Implements the use case defined by the input port.
     @Override
+    public ComparisonResult createComparisonResult(List<Ticker> tickers, DateRange dateRange) {
+        if (tickers == null || tickers.isEmpty() || tickers.size() > 2) {
+            throw new IllegalArgumentException("One or two tickers are required.");
+        }
 
-    //Method will return a Comparison Result object, and takes two variables of the Ticker type as parameters
-    public ComparisonResult compare(Ticker ticker1, Ticker ticker2) {
+        List<PriceSeries> seriesList = new ArrayList<>();
+        for (Ticker ticker : tickers) {
+            seriesList.add(priceMgt.getPriceSeries(ticker, dateRange));
+        }
 
-        //Temporary message in this skeleton implementation to show that the comparison is beginning to take place.
-        System.out.println("\n[Comparison Service] Preparing comparison data for: "
-                + ticker1.getSymbol() + " and " + ticker2.getSymbol());
-
-        // Requests price data for each ticker from the repository.
-        PriceSeries a = repository.loadPrices(ticker1);
-        PriceSeries b = repository.loadPrices(ticker2);
-
-        //Returns a ComparisonResult containing the two retrieved price series.
-        return new ComparisonResult(a, b);
+        return new ComparisonResult(seriesList);
     }
 }
