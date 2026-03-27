@@ -16,14 +16,18 @@ public class PriceSeries {
     /* List to store multiple price points into one price series object. Reference is fixed with final, but contents of list
     are still liable to change */
 
+    private final DateRange dateRange; //reflects new necessary domain concept
+
     //Constructor binds ticker to its data, forming one domain object.
-    public PriceSeries(Ticker ticker, List<PricePoint> prices) {
+    public PriceSeries(Ticker ticker, DateRange dateRange, List<PricePoint> prices) {
         this.ticker = ticker;
         this.prices = prices;
+        this.dateRange = dateRange;
     }
 
     //Getters to access from outside of class. Encapsulation.
     public Ticker getTicker() { return ticker; }
     public List<PricePoint> getPrices() { return prices; }
+    public DateRange getDateRange() { return dateRange; }
 }
 

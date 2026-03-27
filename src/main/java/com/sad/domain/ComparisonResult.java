@@ -1,21 +1,25 @@
 package com.sad.domain;
 
+import java.util.List;
+
 /* ComparisonResult represents the outcome of the compare use case by grouping the two retrieved price
  series into a single structured result. It allows the application layer to return meaningful comparison data
  to the presentation layer */
 
 public class ComparisonResult {
-    private final PriceSeries first;
-    private final PriceSeries second;
-    //The reference is final and so it's pointer cannot change, but the lists can still be altered.
+    private final List<PriceSeries> seriesList;
+    // less rigid to reflect BTM
 
     //Constructor to initialize a comparison containing two price series.
-    public ComparisonResult(PriceSeries first, PriceSeries second) {
-        this.first = first;
-        this.second = second;
+    public ComparisonResult(List<PriceSeries> seriesList) {
+        if (seriesList == null || seriesList.isEmpty() || seriesList.size() > 2) {
+            throw new IllegalArgumentException("ComparisonResult must contain one or two price series.");
+        }
+        this.seriesList = seriesList;
     }
 
-    //Getters to access from outside of class.
-    public PriceSeries getFirst() { return first; }
-    public PriceSeries getSecond() { return second; }
+    public List<PriceSeries> getSeriesList() {
+        return seriesList;
+    }
+
 }
