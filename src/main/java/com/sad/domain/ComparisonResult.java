@@ -15,11 +15,23 @@ public class ComparisonResult {
         if (seriesList == null || seriesList.isEmpty() || seriesList.size() > 2) {
             throw new IllegalArgumentException("ComparisonResult must contain one or two price series.");
         }
+        if (seriesList.size() == 2 &&
+                seriesList.get(0).getTicker().equals(seriesList.get(1).getTicker())) {
+            throw new IllegalArgumentException("Cannot compare the same ticker.");   //the redundancy
+        }
+
         this.seriesList = seriesList;
     }
 
     public List<PriceSeries> getSeriesList() {
-        return seriesList;
+        return List.copyOf(seriesList);     //copy to be safe
     }
 
 }
+
+//note comp result is a application boundary object, sitting in between comp service and the ui
+//big picture: User input
+//→ ComparisonController
+//→ ComparisonService
+//→ ComparisonResult
+//→ Renderer

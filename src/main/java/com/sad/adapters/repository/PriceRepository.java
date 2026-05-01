@@ -3,18 +3,20 @@ package com.sad.adapters.repository;
 import com.sad.domain.DateRange;
 import com.sad.domain.PriceSeries;
 import com.sad.domain.Ticker;
+import com.sad.ports.IExternalAPI;
 import com.sad.ports.ILocalPriceStore;
-import com.sad.ports.IMarketDataProvider;
 import com.sad.ports.IPriceRepository;
+
+//abstracts where price data comes from
 
 public class PriceRepository implements IPriceRepository {
 
     private final ILocalPriceStore localStore;
-    private final IMarketDataProvider marketProvider;
+    private final IExternalAPI externalMarketAPIAdapter;
 
-    public PriceRepository(ILocalPriceStore localStore, IMarketDataProvider marketProvider) {
+    public PriceRepository(ILocalPriceStore localStore, IExternalAPI externalMarketAPIAdapter) {
         this.localStore = localStore;
-        this.marketProvider = marketProvider;
+        this.externalMarketAPIAdapter = externalMarketAPIAdapter;
     }
 
     @Override
@@ -22,11 +24,12 @@ public class PriceRepository implements IPriceRepository {
         PriceSeries local = localStore.read(ticker, dateRange);
 
         if (local != null) {
-            System.out.println("\nSuccessfully retrieved " + ticker.getSymbol() + " price series from local storage.");
+            System.out.println("\n[PriceRepository] Retrieved " + ticker.getSymbol() + " from LocalPriceStore.");
             return local;
         }
 
-        PriceSeries fetched = marketProvider.fetch(ticker, dateRange);
+        System.out.println("\n[PriceRepository] Local data missing. Fetching " + ticker.getSymbol() + " from external service.");
+        PriceSeries fetched = externalMarketAPIAdapter.requestPrices(ticker, dateRange);
         localStore.write(fetched);
         return fetched;
     }

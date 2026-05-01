@@ -27,7 +27,7 @@ public class PriceManagementService implements IPriceMgt {
         repository.storePrices(priceSeries);
     }
 
-    @Override
+    /*@Override
     public void validateDateRange(LocalDate startDate, LocalDate endDate) {
         if (startDate == null || endDate == null) {
             throw new IllegalArgumentException("Dates must not be null.");
@@ -40,5 +40,5 @@ public class PriceManagementService implements IPriceMgt {
         if (ChronoUnit.DAYS.between(startDate, endDate) > 366 * 2L) {
             throw new IllegalArgumentException("Date range must not exceed two years.");
         }
-    }
+    } */
 }

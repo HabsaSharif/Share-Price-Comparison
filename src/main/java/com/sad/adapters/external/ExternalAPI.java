@@ -1,32 +1,54 @@
 package com.sad.adapters.external;
 
-import com.sad.domain.DateRange;
-import com.sad.domain.PricePoint;
-import com.sad.domain.PriceSeries;
-import com.sad.domain.Ticker;
-import com.sad.ports.IExternalAPI;
-
+import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
 
-public class ExternalAPI implements IExternalAPI {
+ //Class to contact EMD, doesnt know abt app domain objects, adapter is responsible for translating this raw API response into domain objects.
 
-    @Override
-    public PriceSeries requestPrices(Ticker ticker, DateRange dateRange) {
-        System.out.println("\n[ExternalAPI] Successfully retrieved data for " + ticker.getSymbol());
+public class ExternalAPI {
+    private static final DateTimeFormatter STOOQ_DATE = DateTimeFormatter.BASIC_ISO_DATE;
 
-        List<PricePoint> data = new ArrayList<>();
+    private final HttpClient httpClient = HttpClient.newBuilder()
+            .connectTimeout(Duration.ofSeconds(8))
+            .build();
 
-        LocalDate current = dateRange.getStartDate();
-        double price = 100.0;
+    public String fetchDailyPricesCsv(String symbol, LocalDate startDate, LocalDate endDate)
+            throws IOException, InterruptedException {
 
-        while (!current.isAfter(dateRange.getEndDate())) {
-            data.add(new PricePoint(current, price));
-            current = current.plusDays(1);
-            price += 5.0;
+        String url = "https://stooq.com/q/d/l/?s="
+                + URLEncoder.encode(toStooqSymbol(symbol), StandardCharsets.UTF_8)
+                + "&d1=" + startDate.format(STOOQ_DATE)
+                + "&d2=" + endDate.format(STOOQ_DATE)
+                + "&i=d";
+
+        HttpRequest request = HttpRequest.newBuilder(URI.create(url))
+                .timeout(Duration.ofSeconds(12))
+                .GET()
+                .header("User-Agent", "SAD-Coursework-ShareComparison/1.0")
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            throw new IOException("External market API HTTP status: " + response.statusCode());
         }
 
-        return new PriceSeries(ticker, dateRange, data);
+        return response.body();
+    }
+
+    private String toStooqSymbol(String symbol) {
+        String lower = symbol.toLowerCase().trim();
+        if (lower.contains(".")) {
+            return lower;
+        }
+        return lower + ".us";
     }
 }

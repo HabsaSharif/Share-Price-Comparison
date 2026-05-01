@@ -26,13 +26,13 @@ public class SharePriceSystemService implements IRequestSharePriceData, ICompare
 
     @Override
     public PriceSeries requestSharePriceData(Ticker ticker, DateRange dateRange) {
-        priceMgt.validateDateRange(dateRange.getStartDate(), dateRange.getEndDate());
+        //priceMgt.validateDateRange(dateRange.getStartDate(), dateRange.getEndDate());
         return priceMgt.getPriceSeries(ticker, dateRange);
     }
 
     @Override
     public ComparisonResult compareSharePrices(List<Ticker> tickers, DateRange dateRange) {
-        priceMgt.validateDateRange(dateRange.getStartDate(), dateRange.getEndDate());
+        //priceMgt.validateDateRange(dateRange.getStartDate(), dateRange.getEndDate());
         return comparisonMgt.createComparisonResult(tickers, dateRange);
     }
 

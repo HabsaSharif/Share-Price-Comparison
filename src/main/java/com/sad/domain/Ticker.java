@@ -1,21 +1,45 @@
 package com.sad.domain;
 
-/* Ticker class will hold the ticker symbol (abbreviations to identify stock/shares)
-*  It is included in the domain package because it represents a real concept (stock identifier)
-* */
+import java.util.Locale;
+import java.util.Objects;
+
+//domain level object; ticker. shared business concept depended on by outer layers like comparison service.
 
 public class Ticker {
     private final String symbol;
-    //Initialising symbol variable as a string. It will not be changed after creation thus its final.
-    //Private to ensure encapsulation and that it's only accessible through getters.
 
-    //Constructor to initialise ticker object.
     public Ticker(String symbol) {
-        this.symbol = symbol;
+        if (symbol == null || symbol.isBlank()) {
+            throw new IllegalArgumentException("Ticker symbol must not be empty.");
+        }
+        this.symbol = symbol.trim().toUpperCase(Locale.ROOT);
+        //locale.ROOT to safely convert to uppercase regardless of language. trim whitespace.
     }
 
-    //Getter to access the symbol of a ticker object from outside its class.
     public String getSymbol() {
         return symbol;
     }
+
+    @Override
+    //checking for redundancy, if another object is logically the same with boolean
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Ticker ticker)) return false;
+        //checking if object being compared is even ticker, if not return false
+        return symbol.equals(ticker.symbol);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(symbol);
+    }
+    //LEARNT: you have to include this whenever you override equals, because hashcode has to match if equals. is true.
+
+    @Override
+    public String toString() {
+        return symbol;
+    }
+    //for user output
 }
+
+

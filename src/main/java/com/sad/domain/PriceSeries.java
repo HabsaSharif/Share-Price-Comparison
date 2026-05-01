@@ -23,11 +23,22 @@ public class PriceSeries {
         this.ticker = ticker;
         this.prices = prices;
         this.dateRange = dateRange;
+        if (prices == null || prices.isEmpty()) {
+            throw new IllegalArgumentException("PriceSeries cannot be empty");
+        }   //ammended
     }
 
     //Getters to access from outside of class. Encapsulation.
     public Ticker getTicker() { return ticker; }
-    public List<PricePoint> getPrices() { return prices; }
+    public List<PricePoint> getPrices() { return List.copyOf(prices); }  //to be safe
     public DateRange getDateRange() { return dateRange; }
 }
-
+//big picture:
+//ExternalMarketAPIAdapter / localpricedata
+//→ builds PriceSeries
+//PriceRepository
+//→ returns PriceSeries
+//ComparisonService
+//→ uses 2 PriceSeries
+//ConsoleRenderer
+//→ reads PriceSeries
